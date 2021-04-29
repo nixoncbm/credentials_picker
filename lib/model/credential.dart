@@ -7,7 +7,7 @@ class Credential {
     this.familyName,
     this.name,
     this.id,
-    this.giveName,
+    this.givenName,
   });
 
   String password;
@@ -15,7 +15,7 @@ class Credential {
   String familyName;
   String name;
   String id;
-  String giveName;
+  String givenName;
 
   factory Credential.fromJson(String str) => Credential.fromMap(json.decode(str));
 
@@ -27,7 +27,7 @@ class Credential {
     familyName: json["familyName"] == null ? null : json["familyName"],
     name: json["name"] == null ? null : json["name"],
     id: json["id"] == null ? null : json["id"],
-    giveName: json["givenName"] == null ? null : json["givenName"],
+    givenName: json["givenName"] == null ? null : json["givenName"],
   );
 
   Map<String, dynamic> toMap() => {
@@ -36,6 +36,6 @@ class Credential {
     "familyName": familyName == null ? null : familyName,
     "name": name == null ? null : name,
     "id": id == null ? null : id,
-    "givenName": giveName == null ? null : giveName,
+    "givenName": givenName == null ? null : givenName,
   };
 }

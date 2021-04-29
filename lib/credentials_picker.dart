@@ -11,10 +11,16 @@ class CredentialsPicker {
 
   static Future<Credential> get pickPhone async {
     final dynamic data = await _channel.invokeMethod('pickPhone');
-    return Credential.fromMap(data);
+    if(data != null){
+      return Credential.fromMap(data);
+    }
+    return null;
   }
   static Future<Credential> get pickEmail async {
     final dynamic data = await _channel.invokeMethod('pickEmail');
-    return Credential.fromMap(data);
+    if (data != null) {
+      return Credential.fromMap(data);
+    }
+    return null;
   }
 }
