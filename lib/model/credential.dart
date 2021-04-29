@@ -21,7 +21,7 @@ class Credential {
 
   String toJson() => json.encode(toMap());
 
-  factory Credential.fromMap(Map<String, dynamic> json) => Credential(
+  factory Credential.fromMap(Map<dynamic, dynamic> json) => Credential(
     password: json["password"] == null ? null : json["password"],
     accountType: json["accountType"] == null ? null : json["accountType"],
     familyName: json["familyName"] == null ? null : json["familyName"],
@@ -30,7 +30,7 @@ class Credential {
     givenName: json["givenName"] == null ? null : json["givenName"],
   );
 
-  Map<String, dynamic> toMap() => {
+  Map<dynamic, dynamic> toMap() => {
     "password": password == null ? null : password,
     "accountType": accountType == null ? null : accountType,
     "familyName": familyName == null ? null : familyName,

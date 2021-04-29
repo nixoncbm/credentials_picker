@@ -31,8 +31,8 @@ class _MyAppState extends State<MyApp> {
     //   platformVersion = 'Failed to get platform version.';
     // }
     try {
-      var map = await CredentialsPicker.pickEmail;
-       platformVersion = map.toString();
+      var map = await CredentialsPicker.pickPhone;
+       platformVersion = map.id;
     } on Exception catch (e) {
       platformVersion = "$e";
     }

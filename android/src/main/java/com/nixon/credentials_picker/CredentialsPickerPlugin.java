@@ -143,7 +143,7 @@ public class CredentialsPickerPlugin implements FlutterPlugin, MethodCallHandler
       if(resultCode == RESULT_OK){
         Credential credential = data.getParcelableExtra(Credential.EXTRA_KEY);
         if(credential != null){
-          HashMap<String, Object> map = new HashMap<String, Object>();
+          HashMap<Object, Object> map = new HashMap<Object, Object>();
           map.put("id", credential.getId());
           map.put("name", credential.getName());
 //          map.put("profilePictureUri", credential.getProfilePictureUri());

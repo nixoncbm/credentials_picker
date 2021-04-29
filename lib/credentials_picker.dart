@@ -10,14 +10,14 @@ class CredentialsPicker {
       const MethodChannel('com.nixon.credential_picker');
 
   static Future<Credential> get pickPhone async {
-    final dynamic data = await _channel.invokeMethod('pickPhone');
+    final Map<dynamic, dynamic> data = await _channel.invokeMethod('pickPhone');
     if(data != null){
       return Credential.fromMap(data);
     }
     return null;
   }
   static Future<Credential> get pickEmail async {
-    final dynamic data = await _channel.invokeMethod('pickEmail');
+    final Map<dynamic, dynamic> data = await _channel.invokeMethod('pickEmail');
     if (data != null) {
       return Credential.fromMap(data);
     }
