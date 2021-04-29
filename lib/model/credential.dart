@@ -27,7 +27,7 @@ class Credential {
     familyName: json["familyName"] == null ? null : json["familyName"],
     name: json["name"] == null ? null : json["name"],
     id: json["id"] == null ? null : json["id"],
-    giveName: json["giveName"] == null ? null : json["giveName"],
+    giveName: json["givenName"] == null ? null : json["givenName"],
   );
 
   Map<String, dynamic> toMap() => {
@@ -36,6 +36,6 @@ class Credential {
     "familyName": familyName == null ? null : familyName,
     "name": name == null ? null : name,
     "id": id == null ? null : id,
-    "giveName": giveName == null ? null : giveName,
+    "givenName": giveName == null ? null : giveName,
   };
 }

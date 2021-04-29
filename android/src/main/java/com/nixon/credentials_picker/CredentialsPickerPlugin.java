@@ -149,7 +149,7 @@ public class CredentialsPickerPlugin implements FlutterPlugin, MethodCallHandler
 //          map.put("profilePictureUri", credential.getProfilePictureUri());
           map.put("password", credential.getPassword());
           map.put("accountType", credential.getAccountType());
-          map.put("giveName", credential.getGivenName());
+          map.put("givenName", credential.getGivenName());
           map.put("familyName", credential.getFamilyName());
           resultRequest.success(map);
           return true;
