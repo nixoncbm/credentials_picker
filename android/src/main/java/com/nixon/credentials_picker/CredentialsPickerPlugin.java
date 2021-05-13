@@ -182,7 +182,11 @@ public class CredentialsPickerPlugin implements FlutterPlugin, MethodCallHandler
                   new Runnable() {
                     @Override
                     public void run() {
-                      resultRequest.success(map);
+                      try {
+                        resultRequest.success(map);
+                      }catch (Exception e){
+                        System.out.println("Error " + e.getMessage());
+                      }
                     }
                   }
           );
