@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -39,6 +41,7 @@ public class CredentialsPickerPlugin implements FlutterPlugin, MethodCallHandler
   private Activity activity;
   private ActivityPluginBinding activityBinding;
   private Result resultRequest;
+  private Handler handler;
   private static final String TAG = "Log picker credential";
 
   @Override
@@ -59,7 +62,14 @@ public class CredentialsPickerPlugin implements FlutterPlugin, MethodCallHandler
   private void pickPhone() {
     if (!isGooglePlayServicesAvailable()) {
       System.out.println("No tiene servicios de google");
-      resultRequest.notImplemented();
+      handler.post(
+              new Runnable() {
+                @Override
+                public void run() {
+                  resultRequest.notImplemented();
+                }
+              }
+      );
       return;
     }
     HintRequest hintRequest = new HintRequest.Builder().setHintPickerConfig(
@@ -72,7 +82,14 @@ public class CredentialsPickerPlugin implements FlutterPlugin, MethodCallHandler
   private void pickEmail() {
     if (!isGooglePlayServicesAvailable()) {
       System.out.println("No tiene servicios de google");
-      resultRequest.notImplemented();
+      handler.post(
+              new Runnable() {
+                @Override
+                public void run() {
+                  resultRequest.notImplemented();
+                }
+              }
+      );
       return;
     }
     HintRequest hintRequest = new HintRequest.Builder().setHintPickerConfig(
@@ -86,8 +103,15 @@ public class CredentialsPickerPlugin implements FlutterPlugin, MethodCallHandler
     PendingIntent intent = credentialsClient.getHintPickerIntent(hintRequest);
     try {
       activity.startIntentSenderForResult(intent.getIntentSender(), CODE_REQUEST_PHONE, null, 0, 0, 0, null);
-    }catch (Exception e){
-      resultRequest.error("Exception", "Error request phone", e.getMessage());
+    }catch (final Exception e){
+      handler.post(
+              new Runnable() {
+                @Override
+                public void run() {
+                  resultRequest.error("Exception", "Error request phone", e.getMessage());
+                }
+              }
+      );
     }
   }
 
@@ -124,7 +148,7 @@ public class CredentialsPickerPlugin implements FlutterPlugin, MethodCallHandler
 
   @Override
   public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
-    resultRequest = result;
+    initResult(result);
     if (call.method.equals("pickPhone")) {
       pickPhone();
     } else if (call.method.equals("pickEmail")) {
@@ -134,7 +158,10 @@ public class CredentialsPickerPlugin implements FlutterPlugin, MethodCallHandler
     }
   }
 
-
+  void initResult(Result result){
+    this.resultRequest = result;
+    this.handler = new Handler(Looper.getMainLooper());
+  }
 
   @Override
   public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -143,7 +170,7 @@ public class CredentialsPickerPlugin implements FlutterPlugin, MethodCallHandler
       if(resultCode == RESULT_OK){
         Credential credential = data.getParcelableExtra(Credential.EXTRA_KEY);
         if(credential != null){
-          HashMap<Object, Object> map = new HashMap<Object, Object>();
+          final HashMap<Object, Object> map = new HashMap<Object, Object>();
           map.put("id", credential.getId());
           map.put("name", credential.getName());
 //          map.put("profilePictureUri", credential.getProfilePictureUri());
@@ -151,11 +178,25 @@ public class CredentialsPickerPlugin implements FlutterPlugin, MethodCallHandler
           map.put("accountType", credential.getAccountType());
           map.put("givenName", credential.getGivenName());
           map.put("familyName", credential.getFamilyName());
-          resultRequest.success(map);
+          handler.post(
+                  new Runnable() {
+                    @Override
+                    public void run() {
+                      resultRequest.success(map);
+                    }
+                  }
+          );
           return true;
         }
       } else {
-        resultRequest.success(null);
+        handler.post(
+                new Runnable() {
+                  @Override
+                  public void run() {
+                    resultRequest.success(null);
+                  }
+                }
+        );
       }
     }
     return false;
