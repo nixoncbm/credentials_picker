@@ -32,7 +32,7 @@ class _MyAppState extends State<MyApp> {
     // }
     try {
       var map = await CredentialsPicker.pickPhone;
-       platformVersion = map.id;
+       platformVersion = map?.id;
     } on Exception catch (e) {
       platformVersion = "$e";
     }

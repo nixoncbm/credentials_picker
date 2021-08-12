@@ -43,6 +43,7 @@ public class CredentialsPickerPlugin implements FlutterPlugin, MethodCallHandler
   private Result resultRequest;
   private Handler handler;
   private static final String TAG = "Log picker credential";
+  private boolean picking = false;
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
@@ -101,7 +102,9 @@ public class CredentialsPickerPlugin implements FlutterPlugin, MethodCallHandler
 
   private void pick(HintRequest hintRequest){
     PendingIntent intent = credentialsClient.getHintPickerIntent(hintRequest);
+    if(picking) return;
     try {
+      picking = true;
       activity.startIntentSenderForResult(intent.getIntentSender(), CODE_REQUEST_PHONE, null, 0, 0, 0, null);
     }catch (final Exception e){
       handler.post(
@@ -184,6 +187,7 @@ public class CredentialsPickerPlugin implements FlutterPlugin, MethodCallHandler
                     public void run() {
                       try {
                         resultRequest.success(map);
+                        picking = false;
                       }catch (Exception e){
                         System.out.println("Error " + e.getMessage());
                       }
