@@ -202,6 +202,7 @@ public class CredentialsPickerPlugin implements FlutterPlugin, MethodCallHandler
                   @Override
                   public void run() {
                     resultRequest.success(null);
+                    picking = false;
                   }
                 }
         );
