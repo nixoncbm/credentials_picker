@@ -4,8 +4,11 @@ import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -19,6 +22,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
@@ -36,6 +40,7 @@ public class CredentialsPickerPlugin implements FlutterPlugin, MethodCallHandler
   private MethodChannel channel;
   private static final String CHANNEL = "com.nixon.credential_picker";
   private static final int CODE_REQUEST_PHONE = 437;
+  private static final int CODE_REQUEST_CONTACT = 438;
   private CredentialsClient credentialsClient;
   private Context context;
   private Activity activity;
@@ -78,6 +83,15 @@ public class CredentialsPickerPlugin implements FlutterPlugin, MethodCallHandler
     ).setIdTokenRequested(true).setPhoneNumberIdentifierSupported(true).build();
 
     pick(hintRequest);
+  }
+
+  private void pickUniqueContact() {
+    if(picking) return;
+    picking = true;
+    Uri uriContacts = Uri.parse("content://contacts");
+    Intent intent = new Intent(Intent.ACTION_PICK, uriContacts);
+    intent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
+    activity.startActivityForResult(intent, CODE_REQUEST_CONTACT);
   }
 
   private void pickEmail() {
@@ -156,6 +170,8 @@ public class CredentialsPickerPlugin implements FlutterPlugin, MethodCallHandler
       pickPhone();
     } else if (call.method.equals("pickEmail")) {
       pickEmail();
+    } else if (call.method.equals("pickUniqueContact")) {
+      pickUniqueContact();
     } else {
       result.notImplemented();
     }
@@ -196,6 +212,53 @@ public class CredentialsPickerPlugin implements FlutterPlugin, MethodCallHandler
           );
           return true;
         }
+      } else {
+        handler.post(
+                new Runnable() {
+                  @Override
+                  public void run() {
+                    resultRequest.success(null);
+                    picking = false;
+                  }
+                }
+        );
+      }
+    } else if (requestCode == CODE_REQUEST_CONTACT){
+      if(resultCode == RESULT_OK){
+        Uri uri = data.getData();
+        String[] projection = { ContactsContract.CommonDataKinds.Phone.NUMBER, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME };
+
+        Cursor cursor = activity.getContentResolver().query(uri, projection,
+                null, null, null);
+        cursor.moveToFirst();
+
+        int numberColumnIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+        String number = cursor.getString(numberColumnIndex);
+
+        int nameColumnIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+        String name = cursor.getString(nameColumnIndex);
+
+        final Map<String, Object> map = new HashMap<>();
+        Map<String, Object> mapNumber = new HashMap<>();
+        map.put("fullName", name);
+        mapNumber.put("phoneNumber", number);
+        mapNumber.put("label", null);
+        map.put("phoneNumber", mapNumber);
+
+        handler.post(
+                new Runnable() {
+                  @Override
+                  public void run() {
+                    try {
+                      resultRequest.success(map);
+                      picking = false;
+                    }catch (Exception e){
+                      System.out.println("Error " + e.getMessage());
+                    }
+                  }
+                }
+        );
+        return true;
       } else {
         handler.post(
                 new Runnable() {

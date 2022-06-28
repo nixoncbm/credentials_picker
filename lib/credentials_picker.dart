@@ -19,6 +19,15 @@ class CredentialsPicker {
     }
     return null;
   }
+  
+  static Future<Map<dynamic, dynamic>> get pickUniqueContact async {
+    if(Platform.isIOS) return null;
+    final Map<dynamic, dynamic> data = await _channel.invokeMethod('pickUniqueContact');
+    if(data != null){
+      return data;
+    }
+    return null;
+  }
   ///Only android
   static Future<Credential> get pickEmail async {
     if(Platform.isIOS) return null;

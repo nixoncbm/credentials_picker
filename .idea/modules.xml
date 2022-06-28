@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/credentials_picker.iml" filepath="$PROJECT_DIR$/.idea/credentials_picker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android/credentials_picker_android.iml" filepath="$PROJECT_DIR$/android/credentials_picker_android.iml" />
     </modules>
   </component>
 </project>
